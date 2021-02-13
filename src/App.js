@@ -6,24 +6,20 @@ const Box = styled.div`
   width: 100px;
   height: 100px;
   background: ${props=>props.on ? "yellow": "tomato"};
+  border-radius:50%;
 `
 
 function createContext(){
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   const audioCtx = new AudioCtx();
 
-  if (audioCtx.state === "suspended") {
-		audioCtx.resume();
-	}
-
 	return audioCtx;
 }
 
-let defaultBeats= [{ volume: 100 }, { volume: 50 }, { volume: 25 }, { volume: 50 }];
 let settings = {
 	isPlaying: false,
 	bpm: 88,
-	beats: defaultBeats,
+	beats: 4,
 	currentBeat: -1
 };
 
@@ -37,12 +33,12 @@ const notesInQueue = [];
 
 let audioBuffers = [];
 
-const getNextNoteTime = (currTime, bpm)=>{
-  const secondPerBeat = 60.0/ bpm;
+const getNextNoteTime = (currTime, bpm,beats)=>{
+  const secondPerBeat = 60.0/ bpm/beats*4;
   return currTime+secondPerBeat;
 }
 
-function scheduleNote(currentBeat, volume,  time){
+function scheduleNote(currentBeat,  time){
   const numNotes = notesInQueue.length;
   if(numNotes){
     const lastScheduleNote = notesInQueue[numNotes-1].note;
@@ -52,18 +48,18 @@ function scheduleNote(currentBeat, volume,  time){
   }
   notesInQueue.push({currentBeat, time});
   if(currentBeat === 0){
-    playSoundAtTime(audioBuffers[1], volume, time);
+    playSoundAtTime(audioBuffers[1], time);
   }else{
-    playSoundAtTime(audioBuffers[0], volume, time);
+    playSoundAtTime(audioBuffers[0], time);
 
   }
 }
 
-const playSoundAtTime = (buffer, volume, time)=>{
+const playSoundAtTime = (buffer, time)=>{
   const sampleSource = audioCtx.createBufferSource();
   const gainNode = audioCtx.createGain();
   sampleSource.buffer = buffer;
-  gainNode.gain.value = volume/100;
+  gainNode.gain.value = 1;
 
   sampleSource.connect(gainNode);
   gainNode.connect(audioCtx.destination);
@@ -73,12 +69,10 @@ const playSoundAtTime = (buffer, volume, time)=>{
 function setupSamples(){
   audioCtx = createContext();
 
-  const samples = ['click.mp3', 'accent.mp3'];
+  const samples = ['nnb.wav', 'nb.wav'];
   const promises = samples.map(async (sample) => {
 		const response = await fetch(`${process.env.PUBLIC_URL}/sounds/${sample}`);
 		const arrayBuffer = await response.arrayBuffer();
-		// Using callbacks because promise syntax doesn't work in Safari (12/9/20)
-		// https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData#Older_callback_syntax
 		return new Promise((resolve, reject) => {
 			audioCtx.decodeAudioData(
 				arrayBuffer,
@@ -95,8 +89,7 @@ function setupSamples(){
 }
 
 function nextBeat(prevBeat, beats){
-  console.log(prevBeat);
-  if(prevBeat>= beats.length-1 || prevBeat==-1){
+  if(prevBeat>= beats-1 || prevBeat==-1){
     return 0;
   }else{
     return prevBeat+1;
@@ -110,30 +103,25 @@ function App() {
 	const currentBeatRef = useRef(settings.currentBeat); // to handle stale closure issue
 	const [bpm, setBPM] = useState(settings.bpm);
 	const [beats, setBeats] = useState(settings.beats);
-
+  const [arr, setArr] = useState([{},{},{},{}]);
   const start = async()=>{
     if(!audioCtx){
       const buffers = await setupSamples();
       audioBuffers = buffers;
     }
-    if(audioCtx.state==="suspended"){
-      audioCtx.resume();
-    }
+
     nextBeatTime = audioCtx.currentTime;
-    console.log(nextBeatTime);
     return;
   }
 
-  
-  
+
   useEffect(()=>{
     function scheduler(){
       const currentTime = audioCtx.currentTime;
       while(nextBeatTime< currentTime + scheduleAheadTime){
         const beatIndex= nextBeat(currentBeatRef.current,beats);
-        const volume = beats[beatIndex].volume;
-        scheduleNote(beatIndex,volume, nextBeatTime);
-        nextBeatTime = getNextNoteTime(currentTime,bpm);
+        scheduleNote(beatIndex, nextBeatTime);
+        nextBeatTime = getNextNoteTime(currentTime,bpm,beats);
       }
       timerID =setTimeout(scheduler, lookahead);
     }
@@ -147,11 +135,11 @@ function App() {
       if(!isPlayingRef.current){
         return;
       }
-      requestAnimationFrame(pollForBeat);
+      setTimeout(pollForBeat, 1000/60);
     }
     if(isPlayingRef.current){
       scheduler();
-      requestAnimationFrame(pollForBeat);
+      pollForBeat();
     }
     return ()=>{
       clearTimeout(timerID);
@@ -179,6 +167,13 @@ function App() {
     isPlayingRef.current = !isPlayingRef.current;
     setPlaying(isPlayingRef.current);
   }
+
+  useEffect(()=>{
+    let newdata = [];
+    for(var i = 0; i < beats; i++)
+   newdata.push({});
+    setArr(newdata);    
+  },[beats])
   return (
     <div>
       {bpm} Bpm
@@ -190,7 +185,21 @@ function App() {
           value={bpm}
           onChange={e=>setBPM(e.target.value)}/>
           <br/>
- 
+          {beats} Beats
+          <input
+          type= "range"
+          min = "2"
+          max= "8"
+          value={beats}
+          onChange={e=>{
+            setBeats(e.target.value);    
+            }
+          }/>
+
+          {arr.map((_,i)=>
+            <Box key={i} on={currentBeat==i}/>
+          )}
+
       <button onClick={handlePlayToggle}>
         {isPlaying? "stop" : "start"}
       </button>
