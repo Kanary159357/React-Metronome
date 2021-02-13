@@ -1,13 +1,8 @@
 import React, {useState, useEffect,useRef, useReducer} from 'react'
 import './App.css';
 import styled from 'styled-components'
-
-const Box = styled.div`
-  width: 100px;
-  height: 100px;
-  background: ${props=>props.on ? "yellow": "tomato"};
-  border-radius:50%;
-`
+import ControlView from './components/ControlView';
+import BeatView from './components/BeatView';
 
 function createContext(){
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -23,6 +18,13 @@ let settings = {
 	currentBeat: -1
 };
 
+const Wrapper = styled.div`
+  position:fixed;
+  width:100%;
+  height: 100%;
+  top:0;
+  left: 0;
+`
 
 let audioCtx = undefined;
 let nextBeatTime = 0;
@@ -175,36 +177,11 @@ function App() {
     setArr(newdata);    
   },[beats])
   return (
-    <div>
-      {bpm} Bpm
-      <br/>
-        <input
-          type= "range"
-          min = "60"
-          max= "200"
-          value={bpm}
-          onChange={e=>setBPM(e.target.value)}/>
-          <br/>
-          {beats} Beats
-          <input
-          type= "range"
-          min = "2"
-          max= "8"
-          value={beats}
-          onChange={e=>{
-            setBeats(e.target.value);    
-            }
-          }/>
-
-          {arr.map((_,i)=>
-            <Box key={i} on={currentBeat==i}/>
-          )}
-
-      <button onClick={handlePlayToggle}>
-        {isPlaying? "stop" : "start"}
-      </button>
-      <br/>
-    </div>
+    <Wrapper>
+     <BeatView currentBeat= {currentBeat} arr={arr} setBPM={setBPM}/>
+   
+     <ControlView beats={beats} bpm={bpm} setBeats={setBeats} setBPM={setBPM} handlePlayToggle={handlePlayToggle} isPlaying={isPlaying}/>
+    </Wrapper>
   );
 }
 
