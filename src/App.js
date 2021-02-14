@@ -53,7 +53,6 @@ function scheduleNote(currentBeat,  time){
     playSoundAtTime(audioBuffers[1], time);
   }else{
     playSoundAtTime(audioBuffers[0], time);
-
   }
 }
 
@@ -70,7 +69,6 @@ const playSoundAtTime = (buffer, time)=>{
 
 function setupSamples(){
   audioCtx = createContext();
-
   const samples = ['nnb.wav', 'nb.wav'];
   const promises = samples.map(async (sample) => {
 		const response = await fetch(`${process.env.PUBLIC_URL}/sounds/${sample}`);
@@ -100,35 +98,35 @@ function nextBeat(prevBeat, beats){
 
 function App() {
 	const [isPlaying, setPlaying] = useState(settings.isPlaying);
-	const isPlayingRef = useRef(settings.isPlaying); // to handle stale closure issue
+	const isPlayingRef = useRef(settings.isPlaying);
 	const [currentBeat, setCurrentBeat] = useState(settings.currentBeat);
-	const currentBeatRef = useRef(settings.currentBeat); // to handle stale closure issue
+	const currentBeatRef = useRef(settings.currentBeat); 
 	const [bpm, setBPM] = useState(settings.bpm);
 	const [beats, setBeats] = useState(settings.beats);
   const [arr, setArr] = useState([{},{},{},{}]);
+  const [worker, setWorker] = useState();
+  const [prev,setPrev] = useState(80);
+  const prevRef = useRef(prev);
   const start = async()=>{
     if(!audioCtx){
       const buffers = await setupSamples();
       audioBuffers = buffers;
     }
-
     nextBeatTime = audioCtx.currentTime;
     return;
   }
 
-
-  useEffect(()=>{
-    function scheduler(){
-      const currentTime = audioCtx.currentTime;
-      while(nextBeatTime< currentTime + scheduleAheadTime){
-        const beatIndex= nextBeat(currentBeatRef.current,beats);
-        scheduleNote(beatIndex, nextBeatTime);
-        nextBeatTime = getNextNoteTime(currentTime,bpm,beats);
-      }
-      timerID =setTimeout(scheduler, lookahead);
+  const scheduler = ()=>{
+    const currentTime = audioCtx.currentTime;
+    while(nextBeatTime< currentTime + scheduleAheadTime){
+      const beatIndex= nextBeat(currentBeatRef.current,beats);
+      scheduleNote(beatIndex, nextBeatTime);
+      nextBeatTime = getNextNoteTime(currentTime,bpm,beats);
     }
-    function pollForBeat(){
-      const currentTime = audioCtx.currentTime;
+  }
+
+  const pollForBeat = ()=>{
+    const currentTime = audioCtx.currentTime;
       while(notesInQueue.length && notesInQueue[0].time<currentTime){
         currentBeatRef.current = notesInQueue[0].currentBeat;
         setCurrentBeat(currentBeatRef.current);
@@ -138,28 +136,66 @@ function App() {
         return;
       }
       setTimeout(pollForBeat, 1000/60);
-    }
-    if(isPlayingRef.current){
-      scheduler();
-      pollForBeat();
-    }
-    return ()=>{
-      clearTimeout(timerID);
-    };
+  }
 
+  useEffect(()=>{
+      if(worker){
+        if(isPlayingRef.current){
+        pollForBeat();
+        worker.onmessage = function(e) {
+          if (e.data == "tick") {
+              scheduler();
+          }
+          else
+              console.log("message: " + e.data);
+        };
+        worker.postMessage({"interval":lookahead});
+        }
+      } 
+ 
   },[isPlaying, beats, bpm]);
+
+
+  useEffect(()=>{
+    const WorkerInstance = new Worker(`${process.env.PUBLIC_URL}/Worker.js`);
+    setWorker(WorkerInstance);
+    function handleTapKey(event){
+      if(event.keyCode===13){
+        event.preventDefault();
+      TapTempo();
+      }
+    }
+    document.addEventListener('keydown', handleTapKey);
+    return ()=>{
+      WorkerInstance.terminate();
+      document.removeEventListener('keydown',handleTapKey);
+    }
+
+  },[])
 
   const stopAndRest = ()=>{
     notesInQueue.splice(0);
+    worker.postMessage("stop");
     currentBeatRef.current = -1;
     setCurrentBeat(currentBeatRef.current);
   };
 
+  const TapTempo = ()=>{
+    var d = new Date();
+    var temp = parseInt(d.getTime(), 10);
+    var bpmValue= Math.ceil(60000/(temp-prevRef.current));
+    setBPM(bpmValue>240 ? 240 : bpmValue);
+    prevRef.current = temp;
+    setPrev(prevRef.current);
+  }
+
   const handlePlayToggle = async()=>{
-    if(isPlaying)
+    if(isPlaying){
     stopAndRest();
+    }
     else{
       try{
+        worker.postMessage("start");
         await start();
       }catch (error){
         alert(error.message);
@@ -176,9 +212,10 @@ function App() {
    newdata.push({});
     setArr(newdata);    
   },[beats])
+
   return (
     <Wrapper>
-     <BeatView currentBeat= {currentBeat} arr={arr} setBPM={setBPM}/>
+     <BeatView currentBeat= {currentBeat} arr={arr} setBPM={setBPM} TapTempo={TapTempo}/>
    
      <ControlView beats={beats} bpm={bpm} setBeats={setBeats} setBPM={setBPM} handlePlayToggle={handlePlayToggle} isPlaying={isPlaying}/>
     </Wrapper>

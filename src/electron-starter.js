@@ -5,8 +5,8 @@ const path = require('path')
 function createWindow () {
   // 브라우저 창을 생성합니다.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 400,
+    height: 300,
     webPreferences: {
       nodeIntegration: true
     }
