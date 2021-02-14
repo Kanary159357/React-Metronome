@@ -107,6 +107,7 @@ function App() {
   const [worker, setWorker] = useState();
   const [prev,setPrev] = useState(80);
   const prevRef = useRef(prev);
+  const workerRef = useRef(worker);
   const start = async()=>{
     if(!audioCtx){
       const buffers = await setupSamples();
@@ -158,20 +159,29 @@ function App() {
 
   useEffect(()=>{
     const WorkerInstance = new Worker(`${process.env.PUBLIC_URL}/Worker.js`);
-    setWorker(WorkerInstance);
+    workerRef.current = WorkerInstance;
+    setWorker(workerRef.current);
+    return ()=>{
+      WorkerInstance.terminate();
+    }
+  },[])
+
+  useEffect(()=>{
     function handleTapKey(event){
       if(event.keyCode===13){
         event.preventDefault();
       TapTempo();
       }
+      if(event.keyCode===32){
+        event.preventDefault();
+      handlePlayToggle();
+      }
     }
     document.addEventListener('keydown', handleTapKey);
     return ()=>{
-      WorkerInstance.terminate();
       document.removeEventListener('keydown',handleTapKey);
     }
-
-  },[])
+  })
 
   const stopAndRest = ()=>{
     notesInQueue.splice(0);
@@ -216,7 +226,6 @@ function App() {
   return (
     <Wrapper>
      <BeatView currentBeat= {currentBeat} arr={arr} setBPM={setBPM} TapTempo={TapTempo}/>
-   
      <ControlView beats={beats} bpm={bpm} setBeats={setBeats} setBPM={setBPM} handlePlayToggle={handlePlayToggle} isPlaying={isPlaying}/>
     </Wrapper>
   );
