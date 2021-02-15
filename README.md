@@ -1,11 +1,8 @@
 <h2>React- Metronome<h2>
 
 codes affected by 
-
-https://github.com/willthefirst/metronome
-
-https://github.com/cwilso/metronome
-
+  https://github.com/willthefirst/metronome
+  https://github.com/cwilso/metronome
 
 <h2>Features<h2>
 
