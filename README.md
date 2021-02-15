@@ -1,10 +1,10 @@
-##React- Metronome
+<h1>React- Metronome</h1>
 
 codes affected by 
   https://github.com/willthefirst/metronome
   https://github.com/cwilso/metronome
 
-Features
+<h1>Features</h1>
 
 1. Visualized ticks
 
