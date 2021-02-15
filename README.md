@@ -1,10 +1,15 @@
 <h1>React- Metronome</h1>
 
 codes affected by 
-<br/>
+  <br/>
   https://github.com/willthefirst/metronome
   <br/>
   https://github.com/cwilso/metronome
+
+<h2>Description</h2>
+
+Metronome with React hook, Web Audio, WebWorker.
+
 
 <h1>Features</h1>
 
