@@ -24,4 +24,4 @@ Metronome with React hook, Web Audio, Web Worker.
 
 <h3>Todo</h3>
 
-semi accent for 6beats, 8beats?
+semi accent for 3,4 bits for 6, 8beats?
