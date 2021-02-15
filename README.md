@@ -8,12 +8,13 @@ codes affected by
 
 1. Visualized ticks
 
-Adjust beats, bpm
+2. Adjust beats, bpm
 
-Tap Tempo function by clicking or pressing Enter button
-Spacebar button binds with Metronome Start
+3. Tap Tempo function by clicking or pressing Enter button
+
+4. Spacebar button binds with Metronome Start
 
 
-Todo
+<h3>Todo</h3>
 
 semi accent for 6beats, 8beats?
