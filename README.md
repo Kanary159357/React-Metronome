@@ -8,7 +8,7 @@ codes affected by
 
 <h2>Description</h2>
 
-Metronome with React hook, Web Audio, WebWorker.
+Metronome with React hook, Web Audio, Web Worker.
 
 
 <h1>Features</h1>
