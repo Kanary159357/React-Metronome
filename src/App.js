@@ -1,3 +1,12 @@
+/*
+Oringinal Codes
+
+
+
+*/
+
+
+
 import React, {useState, useEffect,useRef, useReducer} from 'react'
 import './App.css';
 import styled from 'styled-components'
@@ -28,7 +37,6 @@ const Wrapper = styled.div`
 
 let audioCtx = undefined;
 let nextBeatTime = 0;
-let timerID;
 let lookahead = 10.0;
 let scheduleAheadTime = 0.025;
 const notesInQueue = [];
