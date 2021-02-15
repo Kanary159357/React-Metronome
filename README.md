@@ -1,21 +1,22 @@
 React- Metronome
 
 codes affected by 
+
 https://github.com/willthefirst/metronome
 
 https://github.com/cwilso/metronome
 
 
-Features
+<h2>Features<h2>
 
-Visualized ticks
+<li> 1. Visualized ticks </li>
 
-Adjust beats, bpm
+<li>Adjust beats, bpm </li>
 
-Tap Tempo function by clicking or pressing Enter button
-Spacebar button binds with Metronome Start
+<li>Tap Tempo function by clicking or pressing Enter button</li>
+<li>Spacebar button binds with Metronome Start</li>
 
 
-Todo
+<h2>Todo<h2>
 
 semi accent for 6beats, 8beats?
