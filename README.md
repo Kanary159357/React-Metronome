@@ -1,4 +1,4 @@
-React- Metronome
+<h2>React- Metronome<h2>
 
 codes affected by 
 
