@@ -1,4 +1,4 @@
-<h1>React- Metronome</h1>
+<h1>React-Metronome</h1>
 
 codes affected by 
   <br/>
