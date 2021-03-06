@@ -1,18 +1,10 @@
-/*
-Oringinal Codes
-
-
-
-*/
-
-
 
 import React, {useState, useEffect,useRef, useReducer} from 'react'
 import './App.css';
-import styled from 'styled-components'
+import styled,{createGlobalStyle} from 'styled-components'
 import ControlView from './components/ControlView';
 import BeatView from './components/BeatView';
-
+import AppHeader from './components/AppHeader'
 function createContext(){
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   const audioCtx = new AudioCtx();
@@ -27,13 +19,19 @@ let settings = {
 	currentBeat: -1
 };
 
-const Wrapper = styled.div`
-  position:fixed;
-  width:100%;
-  height: 100%;
-  top:0;
-  left: 0;
+const GlobalStyle = createGlobalStyle`
+  body,html{
+    margin:0;
+    height:100vh;
+  }
 `
+
+const ContentWrapper = styled.div`
+  position: absolute;
+  width:100%;
+  height: calc(100%-32px);
+`
+
 
 let audioCtx = undefined;
 let nextBeatTime = 0;
@@ -232,10 +230,14 @@ function App() {
   },[beats])
 
   return (
-    <Wrapper>
+  <>
+  <GlobalStyle/>
+    <AppHeader/>
+    <ContentWrapper>
      <BeatView currentBeat= {currentBeat} arr={arr} setBPM={setBPM} TapTempo={TapTempo}/>
      <ControlView beats={beats} bpm={bpm} setBeats={setBeats} setBPM={setBPM} handlePlayToggle={handlePlayToggle} isPlaying={isPlaying}/>
-    </Wrapper>
+    </ContentWrapper>
+    </>
   );
 }
 

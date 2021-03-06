@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 
 const ControlViewBlock = styled.div`
-    height: 40%;
+    height: 40vh;
+    margin-top:-32px;
     width: 100%;
     background: yellowgreen;
     display:flex;
@@ -10,14 +11,14 @@ const ControlViewBlock = styled.div`
     align-items:center;
 `
 const ControlSlider = styled.input`
-   -webkit-appearance: none;  /* Override default CSS styles */
+   -webkit-appearance: none;  
   appearance: none;
-  width: 50%; /* Full-width */
-  height: 25px; /* Specified height */
-  background: #d3d3d3; /* Grey background */
-  outline: none; /* Remove outline */
-  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
-  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  width: 50%; 
+  height: 25px; 
+  background: #d3d3d3; 
+  outline: none; 
+  opacity: 0.7; 
+  -webkit-transition: .2s; 
   transition: opacity .2s;
   &:hover{
     background: #d4d4d4;
