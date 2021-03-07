@@ -12,7 +12,7 @@ const TitleBar = styled.header`
   width:100%;
   top:0;
   left:0;
-  background:red;
+  background:#5D584A;
 
   .drag{
     width:100%;
@@ -49,7 +49,7 @@ const ControlButton = styled.div`
        width: 100%;
        height:100%;
        &:hover{
-        background:yellow;
+        background:#696457;
        }
 `
 
@@ -66,14 +66,14 @@ const AppHeader = ()=>{
         <TitleBar>
         <div className="drag">
           <AppTitle>
-              안녕
+              ReMeO
           </AppTitle>
           <Control>
             <ControlButton onClick = {MinClick}>
                 <img src={MinImg}/>
             </ControlButton>
             <ControlButton onClick = {CloseClick}>
-                <img src={CloseImg}/>
+                <img src={CloseImg} color="#b0aca2"/>
             </ControlButton>
           </Control>
         </div>
