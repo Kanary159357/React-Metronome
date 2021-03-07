@@ -4,7 +4,7 @@ import BeatBall from './BeatBall';
 const BeatViewBlock = styled.div`
     width:100%;
     height: 60vh;
-    background: #FEF3C8;
+    background: #f7f7f7;
     display:flex;
     justify-content:space-around;
     align-items:center;
@@ -12,7 +12,7 @@ const BeatViewBlock = styled.div`
 const Box = styled.div`
 width: 75px;
 height: 75px;
-background: ${props=>props.on ? "#FBAB6F": "#EC8953"};
+background: ${props=>props.on ? "#ffa069": "tomato"};
 border-radius:50%;
 `
 const TapButton = styled.div`
@@ -21,13 +21,12 @@ const TapButton = styled.div`
   width: 10%;
   height:10%;
   position: absolute;
-  background: #EC8953;
+  background: coral;
   font-size: 1.5em;
   display:flex;
   justify-content:center;
   align-items:center;
   color: #fff;
-  user-select:none;
   border-radius: 0 0 15px;
 `
 

@@ -23,7 +23,6 @@ const GlobalStyle = createGlobalStyle`
   body,html{
     margin:0;
     height:100vh;
-    user-select:none;
   }
 `
 
@@ -201,8 +200,7 @@ function App() {
     var d = new Date();
     var temp = parseInt(d.getTime(), 10);
     var bpmValue= Math.ceil(60000/(temp-prevRef.current));
-    setBPM(bpmValue>240 ? 240 : bpmValue<40? 40: bpmValue);
-
+    setBPM(bpmValue>240 ? 240 : bpmValue);
     prevRef.current = temp;
     setPrev(prevRef.current);
   }
